@@ -1,0 +1,35 @@
+@import '../tokens.css';
+
+body {
+  width: 360px;
+}
+.popup {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+}
+.site-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.favicon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  object-fit: contain;
+  padding: 4px;
+}
+.site-name {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 11px;
+}

@@ -1,0 +1,62 @@
+# ---------- Dependencies ----------
+node_modules/
+.pnpm-store/
+.yarn/
+bower_components/
+
+# ---------- Build output (rebuild with `npm run build`) ----------
+dist/
+build/
+out/
+*.tsbuildinfo
+.vite/
+.cache/
+.parcel-cache/
+
+# ---------- Packaged / release artifacts (publish these with GitHub Releases) ----------
+*.zip
+*.crx
+*.pem
+*.xpi
+
+# ---------- Secrets and local configuration ----------
+.env
+.env.*
+!.env.example
+*.key
+*.p12
+*.pfx
+credentials*.json
+secrets*.json
+service-account*.json
+.npmrc
+.netrc
+
+# ---------- Local tooling and editor files ----------
+.claude/
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*~
+
+# ---------- Logs and temp files ----------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+tmp/
+temp/
+scratch/
+
+# ---------- Operating system ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# ---------- Python (in case a tool adds it) ----------
+__pycache__/
+*.pyc
+.venv/

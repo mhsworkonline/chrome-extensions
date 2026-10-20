@@ -1,0 +1,26 @@
+{
+  "name": "site-insights",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.9",
+    "preact": "^10.24.3",
+    "tldts": "^6.1.60"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.9.1",
+    "@types/chrome": "^0.0.280",
+    "@types/node": "^22.20.5",
+    "sharp": "^0.35.5",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10"
+  }
+}

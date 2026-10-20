@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "Full Webpage Capture",
+  "version": "1.0.0",
+  "description": "Capture a full-length screenshot of any webpage. Stitch, download as PNG/PDF, or copy to clipboard.",
+
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs",
+    "downloads"
+  ],
+  "host_permissions": ["<all_urls>"],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "32":  "icons/icon32.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "Full Webpage Capture",
+    "default_popup": "popup.html"
+  },
+
+  "commands": {
+    "_execute_action": {
+      "suggested_key": {
+        "default": "Alt+Shift+P",
+        "mac":     "Alt+Shift+P"
+      },
+      "description": "Capture full webpage screenshot"
+    }
+  },
+
+  "icons": {
+    "16":  "icons/icon16.png",
+    "32":  "icons/icon32.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["capture.html", "capture.js", "lib/minipdf.js"],
+      "matches":   ["<all_urls>"]
+    }
+  ]
+}

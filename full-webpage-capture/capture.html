@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Full Webpage Capture</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f1117;
+      --surface:   #1a1d27;
+      --border:    #2a2d3a;
+      --accent:    #3b82f6;
+      --accent-h:  #2563eb;
+      --text:      #e2e8f0;
+      --muted:     #64748b;
+      --success:   #22c55e;
+      --radius:    10px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ────────────────────────────────────────────────────────────── */
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 28px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+
+    header h1 {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    header .subtitle {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    /* ── Main content ──────────────────────────────────────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 28px;
+    }
+
+    /* ── Progress section ──────────────────────────────────────────────────── */
+    #section-progress {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      max-width: 420px;
+      width: 100%;
+      padding-top: 60px;
+    }
+
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress-wrap {
+      width: 100%;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #60a5fa);
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    #progress-label {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Error section ─────────────────────────────────────────────────────── */
+    #section-error {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      max-width: 380px;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    .error-icon { font-size: 48px; }
+
+    #error-message {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── Result section ────────────────────────────────────────────────────── */
+    #section-result {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+    }
+
+    /* Action toolbar */
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s, transform 0.1s, opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-h); }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover:not(:disabled) { background: #22253a; }
+
+    .btn-success {
+      background: var(--success) !important;
+      color: #fff !important;
+    }
+
+    /* Meta info */
+    #capture-meta {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Image preview */
+    .preview-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      padding: 12px;
+    }
+
+    #preview-img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    /* Hidden canvas used for stitching (not displayed, just data source) */
+    #stitch-canvas { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 3L7.17 5H4C2.9 5 2 5.9 2 7v13c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-3.17L15 3H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+      <circle cx="12" cy="13" r="3"/>
+    </svg>
+  </div>
+  <h1>Full Webpage Capture</h1>
+  <span class="subtitle" id="source-host"></span>
+</header>
+
+<main>
+
+  <!-- Progress / loading state -->
+  <div id="section-progress">
+    <div class="spinner"></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div id="progress-bar"></div></div>
+      <p id="progress-label">Initializing capture…</p>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div id="section-error">
+    <div class="error-icon">⚠️</div>
+    <h2>Capture failed</h2>
+    <p id="error-message">Something went wrong. Please try again.</p>
+  </div>
+
+  <!-- Result state -->
+  <div id="section-result">
+    <div class="toolbar">
+      <button class="btn btn-primary"    id="btn-png">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
+        Download PNG
+      </button>
+      <button class="btn btn-secondary"  id="btn-pdf">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
+        Download PDF
+      </button>
+      <button class="btn btn-secondary"  id="btn-copy">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+        Copy to Clipboard
+      </button>
+    </div>
+    <p id="capture-meta"></p>
+    <div class="preview-wrap">
+      <img id="preview-img" alt="Full page screenshot">
+    </div>
+  </div>
+
+</main>
+
+<!-- Hidden canvas for stitching -->
+<canvas id="stitch-canvas"></canvas>
+
+<script src="lib/minipdf.js"></script>
+<script src="capture.js"></script>
+</body>
+</html>

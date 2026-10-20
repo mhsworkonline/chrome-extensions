@@ -1,0 +1,174 @@
+@import '../tokens.css';
+
+.shell {
+  min-height: 100vh;
+}
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px max(16px, calc((100vw - 1180px) / 2)) 0;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+.brand-name {
+  font-weight: 700;
+  font-size: 14px;
+}
+.site-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 12px;
+}
+.favicon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  object-fit: contain;
+  padding: 5px;
+}
+.site-name {
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+.tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab {
+  border: 0;
+  background: none;
+  padding: 8px 10px;
+  color: var(--muted);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.tab:hover {
+  color: var(--text);
+}
+.tab[aria-selected='true'] {
+  color: var(--primary-strong);
+  border-bottom-color: var(--primary);
+}
+/* Cards flow into columns when the dashboard has room (full tab); one column in the side panel. */
+.content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  align-items: start;
+  gap: 14px;
+  padding: 16px max(16px, calc((100vw - 1180px) / 2));
+}
+.content > .note,
+.content > .grid-3,
+.content > .subnav,
+.content > .score-grid {
+  grid-column: 1 / -1;
+}
+.subnav {
+  display: flex;
+}
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+.score-tile {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: border-color 0.12s, transform 0.12s;
+}
+.score-tile:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+.score-value {
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 4px 0 2px;
+}
+.tone-good {
+  color: var(--good);
+}
+.tone-warn {
+  color: var(--warn);
+}
+.tone-bad {
+  color: var(--bad);
+}
+.tone-neutral {
+  color: var(--text);
+}
+.issue {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.issue:hover {
+  background: var(--surface-2);
+}
+.issue-text {
+  display: grid;
+  min-width: 0;
+}
+.issue-text .small {
+  overflow-wrap: anywhere;
+}
+.issue-more {
+  background: none;
+  border: 0;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: var(--shadow);
+}
+.soon {
+  border: 1px dashed var(--border);
+  box-shadow: none;
+  background: transparent;
+}

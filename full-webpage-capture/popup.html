@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Full Webpage Capture</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:  #6d28d9;
+      --blue:    #2563eb;
+      --cyan:    #06b6d4;
+      --yellow:  #fde047;
+      --bg:      #080818;
+      --surface: #0f1128;
+      --border:  rgba(255,255,255,0.08);
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+      --green:   #22c55e;
+      --red:     #ef4444;
+    }
+
+    body {
+      width: 300px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, #1a0538 0%, #0c1a40 100%);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    /* shimmer line */
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(109,40,217,0.6), var(--cyan), rgba(37,99,235,0.5), transparent);
+    }
+    .header img { width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0; }
+    .header-text { }
+    .header h1  { font-size: 13px; font-weight: 700; letter-spacing: -0.2px; }
+    .header p   { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+    /* ── Body ────────────────────────────────────────────────────────────────── */
+    .body { padding: 18px 14px 14px; }
+
+    /* ── State: idle ─────────────────────────────────────────────────────────── */
+    #state-idle { }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .hero-icon {
+      font-size: 38px;
+      line-height: 1;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 12px rgba(6,182,212,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0);   }
+      50%       { transform: translateY(-4px); }
+    }
+    .hero-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, #a78bfa, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* Capture button */
+    .btn-capture {
+      width: 100%;
+      padding: 13px 16px;
+      background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: -0.1px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.12s, box-shadow 0.2s;
+      box-shadow: 0 4px 22px rgba(109,40,217,0.45),
+                  0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+    .btn-capture::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+    /* Animated shimmer sweep */
+    .btn-capture::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transform: skewX(-20deg);
+      animation: sweep 2.8s ease-in-out infinite;
+    }
+    @keyframes sweep {
+      0%   { left: -100%; }
+      60%  { left: 160%;  }
+      100% { left: 160%;  }
+    }
+    .btn-capture:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(109,40,217,0.55), 0 0 0 1px rgba(255,255,255,0.1) inset; }
+    .btn-capture:active { transform: scale(0.97); }
+    .btn-icon { font-size: 16px; }
+
+    /* Shortcut hint */
+    .shortcut-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      padding: 2px 6px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 10px;
+      color: #94a3b8;
+    }
+
+    /* ── State: capturing ────────────────────────────────────────────────────── */
+    #state-capturing {
+      display: none;
+      text-align: center;
+    }
+
+    .cap-spinner {
+      width: 42px; height: 42px;
+      margin: 0 auto 12px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: var(--cyan);
+      border-right-color: var(--purple);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .cap-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      background: linear-gradient(135deg, #a78bfa, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    #cap-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      min-height: 16px;
+    }
+
+    /* Progress bar */
+    .prog-wrap { position: relative; }
+    .prog-track {
+      width: 100%;
+      height: 7px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    #prog-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--purple), var(--blue), var(--cyan));
+      background-size: 200% 100%;
+      border-radius: 99px;
+      transition: width 0.45s cubic-bezier(.4,0,.2,1);
+      animation: barShimmer 2s linear infinite;
+    }
+    @keyframes barShimmer {
+      0%   { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+    #prog-pct {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    /* Section dots */
+    #cap-dots {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      transition: background 0.3s;
+    }
+    .dot.done { background: var(--cyan); }
+    .dot.active {
+      background: var(--purple);
+      box-shadow: 0 0 6px var(--purple);
+      animation: pulse 0.7s ease-in-out infinite alternate;
+    }
+    @keyframes pulse { to { transform: scale(1.4); } }
+
+    /* ── State: done ─────────────────────────────────────────────────────────── */
+    #state-done {
+      display: none;
+      text-align: center;
+    }
+    .done-ring {
+      width: 52px; height: 52px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      border: 3px solid var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      animation: popIn 0.4s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 0 20px rgba(34,197,94,0.3);
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .done-title { font-size: 14px; font-weight: 700; color: var(--green); }
+    .done-sub   { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ── State: error ────────────────────────────────────────────────────────── */
+    #state-error {
+      display: none;
+      text-align: center;
+    }
+    .err-icon  { font-size: 36px; margin-bottom: 10px; }
+    .err-title { font-size: 13px; font-weight: 700; color: var(--red); margin-bottom: 4px; }
+    .err-sub   { font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .btn-retry {
+      margin-top: 14px;
+      padding: 8px 22px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-retry:hover { background: rgba(239,68,68,0.2); }
+
+    /* ── Footer ──────────────────────────────────────────────────────────────── */
+    .footer {
+      padding: 8px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-left { font-size: 10px; color: #1e293b; }
+    .footer-right { font-size: 10px; color: #1e293b; }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────────────────────────── -->
+<div class="header">
+  <img src="icons/icon48.png" alt="">
+  <div class="header-text">
+    <h1>Full Webpage Capture</h1>
+    <p>Scroll-to-stitch screenshot tool</p>
+  </div>
+</div>
+
+<!-- ── Body ──────────────────────────────────────────────────────────────────── -->
+<div class="body">
+
+  <!-- Idle -->
+  <div id="state-idle">
+    <div class="hero">
+      <div class="hero-icon">⚡</div>
+      <div class="hero-title">Capture the Whole Page</div>
+      <div class="hero-sub">Scrolls automatically &amp; stitches every<br>section into one full-length image</div>
+    </div>
+    <button class="btn-capture" id="btn-capture">
+      <span class="btn-icon">📸</span> Capture Full Page
+    </button>
+    <div class="shortcut-row">
+      <span>Shortcut:</span>
+      <span class="kbd">Alt + Shift + P</span>
+    </div>
+  </div>
+
+  <!-- Capturing -->
+  <div id="state-capturing">
+    <div class="cap-spinner"></div>
+    <div class="cap-title">Capturing your page…</div>
+    <div id="cap-sub">Preparing…</div>
+    <div class="prog-wrap">
+      <div class="prog-track"><div id="prog-bar"></div></div>
+    </div>
+    <div id="prog-pct">0%</div>
+    <div id="cap-dots"></div>
+  </div>
+
+  <!-- Done -->
+  <div id="state-done">
+    <div class="done-ring">✓</div>
+    <div class="done-title">Capture complete!</div>
+    <div class="done-sub">Opening viewer tab…</div>
+  </div>
+
+  <!-- Error -->
+  <div id="state-error">
+    <div class="err-icon">⚠️</div>
+    <div class="err-title" id="err-title">Capture failed</div>
+    <div class="err-sub"   id="err-sub">Please try again.</div>
+    <button class="btn-retry" id="btn-retry">↩ Try Again</button>
+  </div>
+
+</div>
+
+<!-- ── Footer ────────────────────────────────────────────────────────────────── -->
+<div class="footer">
+  <span class="footer-left">Full Webpage Capture</span>
+  <span class="footer-right">v1.0</span>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

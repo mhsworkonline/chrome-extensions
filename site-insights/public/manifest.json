@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Site Insights",
+  "version": "0.3.0",
+  "description": "Free, lightweight insights for any website: rank, estimated traffic, tech stack, SEO and your own activity.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    },
+    "default_title": "Site Insights",
+    "default_popup": "popup.html"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "background": {
+    "service_worker": "worker.js",
+    "type": "module"
+  },
+  "permissions": ["storage", "tabs", "sidePanel", "scripting", "idle", "alarms", "cookies", "contextMenus"],
+  "commands": {
+    "open-dashboard": {
+      "suggested_key": { "default": "Alt+Shift+S" },
+      "description": "Open the Site Insights dashboard"
+    }
+  },
+  "host_permissions": ["<all_urls>"]
+}

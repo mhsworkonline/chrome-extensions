@@ -1,0 +1,6 @@
+* text=auto
+*.wasm binary
+*.gz binary
+*.png binary
+*.ico binary
+*.traineddata binary
